@@ -19,7 +19,7 @@
 const m = require('mithril')
 const _ = require('lodash')
 
-const API_PATH = 'api/'
+const API_PATH = 'http://localhost:8000/'
 const STORAGE_KEY = 'curator.authorization'
 let authToken = null
 

@@ -61,6 +61,7 @@ class RouteHandler(object):
     async def create_agent(self, request):
         body = await decode_request(request)
         required_fields = ['name', 'password']
+        print("data posted")
         validate_fields(required_fields, body)
 
         public_key, private_key = self._messenger.get_new_key_pair()
@@ -199,9 +200,14 @@ def validate_fields(required_fields, body):
 
 
 def encrypt_private_key(aes_key, public_key, private_key):
-    init_vector = bytes.fromhex(public_key[:32])
-    cipher = AES.new(bytes.fromhex(aes_key), AES.MODE_CBC, init_vector)
-    return cipher.encrypt(private_key)
+    print("length is",len(private_key))
+    e = public_key[:16].encode('utf8')
+    print("lene:",len(e))
+    # init_vector = bytes.fromhex(public_key[:32])
+    # cipher = AES.new(bytes.fromhex(aes_key), AES.MODE_CBC, init_vector)
+    cipher = AES.new(aes_key.encode('utf8'), AES.MODE_CBC, public_key[:16].encode('utf8'))
+    #cipher =  AES.new('This is a key123'.encode("utf8"), AES.MODE_CBC, 'This is an IV456'.encode("utf8"))
+    return cipher.encrypt(private_key.encode("utf8"))
 
 
 def decrypt_private_key(aes_key, public_key, encrypted_private_key):

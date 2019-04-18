@@ -54,7 +54,9 @@ class Database(object):
                 LOGGER.info('Successfully connected to database')
                 return
 
-            except psycopg2.OperationalError:
+            except psycopg2.OperationalError as e:
+                print("db error: ", str(e))
+
                 LOGGER.debug(
                     'Connection failed.'
                     ' Retrying connection (%s retries remaining)',

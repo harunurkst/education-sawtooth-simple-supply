@@ -17,6 +17,7 @@ import argparse
 import asyncio
 import logging
 import sys
+import aiohttp_cors
 
 from zmq.asyncio import ZMQEventLoop
 
@@ -51,7 +52,7 @@ def parse_args(args):
     parser.add_argument(
         '--db-name',
         help='The name of the database',
-        default='simple-supply')
+        default='simple_supply')
     parser.add_argument(
         '--db-host',
         help='The host of the database',
@@ -105,12 +106,27 @@ def start_rest_api(host, port, messenger, database):
     app.router.add_post('/records/{record_id}/update', handler.update_record)
 
     LOGGER.info('Starting Simple Supply REST API on %s:%s', host, port)
+
+    cors = aiohttp_cors.setup(app, defaults={
+        "*": aiohttp_cors.ResourceOptions(
+            allow_credentials=True,
+            expose_headers="*",
+            allow_headers="*",
+        )
+    })
+
+    for route in list(app.router.routes()):
+        cors.add(route)
+
     web.run_app(
         app,
         host=host,
         port=port,
         access_log=LOGGER,
         access_log_format='%r: %s status, %b size, in %Tf s')
+
+    
+
 
 
 def main():

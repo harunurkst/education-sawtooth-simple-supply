@@ -25,6 +25,7 @@ const api = require('../services/api')
 
 const agentSubmitter = state => e => {
   e.preventDefault()
+  console.log("in submit function")
 
   const agentKeys = ['name', 'password']
   const agent = _.pick(state, agentKeys)
